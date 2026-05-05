@@ -38,12 +38,15 @@ outputs:
   low-count:
     description: A string containing the number of Low security findings discovered during the scan.
     value: ${{steps.process-outputs.outputs.low-count}}
+  policy-subject:
+    description: A json value containing the details about the vulnerability scan summary & details.
+    value: ${{steps.process-outputs.outputs.policy-subject}}
 
 runs:
   using: composite
   steps:
     - name: Generate sha and ref
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:1f95fd45dd03fa6f363ff95cb20142fe4b7d83c4
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:eda1f86aa17218e8779fae9ff1ac9161b708d07e
       with:
         entrypoint: assets-plugin-chain-utils
         args: get-commit-info
@@ -56,7 +59,7 @@ runs:
         INPUT_WORKSPACE_DIR: ${{ inputs.workspace-dir }}
 
     - name: Generate reference files
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:1f95fd45dd03fa6f363ff95cb20142fe4b7d83c4
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:eda1f86aa17218e8779fae9ff1ac9161b708d07e
       with:
         entrypoint: assets-plugin-chain-utils
         args: generate-references --asset-type "CODE"
@@ -86,7 +89,7 @@ runs:
       run: /app/plugin-snyk-sca-scanner -mode single
 
     - name: Complete execution plan
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:1f95fd45dd03fa6f363ff95cb20142fe4b7d83c4
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:eda1f86aa17218e8779fae9ff1ac9161b708d07e
       id: process-outputs
       with:
         entrypoint: assets-plugin-chain-utils
@@ -95,3 +98,4 @@ runs:
         INPUT_CLOUDBEES_API_TOKEN: ${{ cloudbees.api.token }}
         INPUT_CLOUDBEES_API_URL: ${{ cloudbees.api.url }}
         INPUT_RUN_ID: ${{ cloudbees.run_id }}
+        INPUT_WORKSPACE_DIR: ${{ inputs.workspace-dir }}
